@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import {
   Dimensions,
   View,
@@ -53,7 +53,7 @@ export const Calendar12 = () => {
   const headerRef = useRef<FlatList<any>>(null);
   const animatedValue = useRef(new Animated.Value(0)).current;
 
-  const renderItem = ({ item }: { item: string }) => {
+  const renderItem = useCallback(({ item }: { item: string }) => {
     return (
       <Calendar
         style={{ width: window.width }}
@@ -62,23 +62,26 @@ export const Calendar12 = () => {
         hideArrows={true}
       />
     );
-  };
+  }, []);
 
-  const renderMonths = ({ item, index }: { item: string; index: number }) => {
-    return (
-      <TouchableOpacity
-        style={styles.headerTab}
-        onPress={() => {
-          calendarRef?.current?.scrollToIndex({
-            index,
-            animated: true,
-          });
-          setCurrentMonthIndex(index);
-        }}>
-        <Text style={styles.headerTabText}>{item}</Text>
-      </TouchableOpacity>
-    );
-  };
+  const renderMonths = useCallback(
+    ({ item, index }: { item: string; index: number }) => {
+      return (
+        <TouchableOpacity
+          style={styles.headerTab}
+          onPress={() => {
+            calendarRef?.current?.scrollToIndex({
+              index,
+              animated: true,
+            });
+            setCurrentMonthIndex(index);
+          }}>
+          <Text style={styles.headerTabText}>{item}</Text>
+        </TouchableOpacity>
+      );
+    },
+    [],
+  );
   const toNext = () => {
     headerRef.current?.scrollToIndex({
       index: headerMonthsIndex + MAX_MONTH_COUNT,
